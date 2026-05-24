@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NaijaRec Cold-Start</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel input-panel">
+        <div class="brand-row">
+          <div class="mark" aria-hidden="true">N</div>
+          <div>
+            <h1>NaijaRec Cold-Start</h1>
+            <p>
+              Persona-aware recommendations for restaurants and grocery
+              products.
+            </p>
+          </div>
+        </div>
+
+        <div class="mode-toggle" aria-label="Recommendation mode">
+          <button id="personaMode" class="mode-button active" type="button">
+            New Persona
+          </button>
+          <button id="benchmarkMode" class="mode-button" type="button">
+            Evaluated Model
+          </button>
+        </div>
+
+        <div id="personaControls">
+          <label for="persona">User Persona / Preference Context</label>
+          <textarea id="persona" rows="8">
+A Nigerian student in Philadelphia who enjoys spicy food, grilled meat, jollof-style rice dishes, suya-like flavours, large portions, and affordable casual restaurants.</textarea
+          >
+
+          <div class="control-grid">
+            <div>
+              <label for="domain">Domain</label>
+              <select id="domain">
+                <option value="restaurants">Restaurants - Yelp Cities</option>
+                <option value="amazon_grocery">Grocery Products - Amazon Full</option>
+                <option value="amazon_grocery_dense">
+                  Grocery Products - Amazon Dense
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label for="city">City</label>
+              <select id="city">
+                <option value="Philadelphia">Philadelphia</option>
+                <option value="Tampa">Tampa</option>
+                <option value="Nashville">Nashville</option>
+                <option value="">Any city</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="topK">Top K</label>
+              <input id="topK" type="number" min="1" max="20" value="5" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="recommendBtn" type="button">Recommend</button>
+            <button id="sampleRestaurant" class="secondary" type="button">
+              Restaurant Sample
+            </button>
+            <button id="sampleGrocery" class="secondary" type="button">
+              Grocery Sample
+            </button>
+          </div>
+        </div>
+
+        <div id="benchmarkControls" class="hidden">
+          <label for="benchmarkModel">Evaluated dataset</label>
+          <select id="benchmarkModel"></select>
+
+          <div class="benchmark-grid">
+            <div>
+              <label for="benchmarkMethod">Model method</label>
+              <select id="benchmarkMethod"></select>
+            </div>
+            <div>
+              <label for="benchmarkTopK">Top K</label>
+              <input
+                id="benchmarkTopK"
+                type="number"
+                min="1"
+                max="20"
+                value="10"
+              />
+            </div>
+          </div>
+
+          <label for="benchmarkUser">Held-out evaluation user</label>
+          <select id="benchmarkUser"></select>
+
+          <div class="actions">
+            <button id="benchmarkBtn" type="button">Show Ranking</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel output-panel">
+        <div class="result-head">
+          <div>
+            <h2>Recommendations</h2>
+            <p id="status">Ready</p>
+          </div>
+          <a href="/docs" target="_blank" rel="noreferrer">API docs</a>
+        </div>
+
+        <div id="systemInfo" class="system-info"></div>
+        <div id="evidence" class="hidden"></div>
+        <div id="results" class="results"></div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+# Large datasets and generated model inputs/outputs distributed outside GitHub
+/data/
+/user_review_history.json
+/restaurant_detail.csv
+/splits.json
+
+# Local experiment logs and private review/report material
+/log
+/logs.md
+/reviews/
+/*.docx
+
+# Secrets and local environments
+.env
+.env.local
+.venv/
+venv/
+agentvenv*/
+
+# Python and notebook caches
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Operating system/editor artifacts
+.DS_Store
+.vscode/
