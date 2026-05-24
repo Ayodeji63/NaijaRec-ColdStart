@@ -1,6 +1,6 @@
-# naijarec_cold-start
+# NaijaRec - Cold Start
 
-**naijarec_cold-start** is an offline recommendation research pipeline for evaluating text-driven cold-start recommendation in a Nigerian diaspora restaurant context. The main experiment uses Yelp restaurant reviews from Philadelphia, Tampa, and Nashville as a diaspora-proxy dataset, while Amazon Grocery is used as a cross-domain stress test to evaluate whether the same retrieval and reranking pipeline transfers to a different item domain.
+**NaijaRec Cold Start** is an offline recommendation research pipeline for evaluating text-driven cold-start recommendation in a Nigerian diaspora restaurant context. The main experiment uses Yelp restaurant reviews from Philadelphia, Tampa, and Nashville as a diaspora-proxy dataset, while Amazon Grocery is used as a cross-domain stress test to evaluate whether the same retrieval and reranking pipeline transfers to a different item domain.
 
 This repository focuses on the reproducibility of the offline experiments: dataset preparation, keyword extraction, review-derived graph retrieval, LLM-based reranking, hybrid reranking, and metric evaluation.
 
@@ -10,22 +10,22 @@ The containerized persona recommendation application is documented separately in
 
 ## Table of Contents
 
-* [Project Summary](#project-summary)
-* [What Is Implemented](#what-is-implemented)
-* [System Design](#system-design)
-* [Repository Structure](#repository-structure)
-* [Environment Setup](#environment-setup)
-* [Dataset and Artifact Access](#dataset-and-artifact-access)
-* [Quick Reproduction Paths](#quick-reproduction-paths)
-* [Yelp Restaurant Experiments](#yelp-restaurant-experiments)
-* [Amazon Grocery Cross-Domain Experiments](#amazon-grocery-cross-domain-experiments)
-* [Main Results](#main-results)
-* [Result Visualizations](#result-visualizations)
-* [Metric Interpretation](#metric-interpretation)
-* [Limitations](#limitations)
-* [Security and Submission Checklist](#security-and-submission-checklist)
-* [Additional Documentation](#additional-documentation)
-* [References](#references)
+- [Project Summary](#project-summary)
+- [What Is Implemented](#what-is-implemented)
+- [System Design](#system-design)
+- [Repository Structure](#repository-structure)
+- [Environment Setup](#environment-setup)
+- [Dataset and Artifact Access](#dataset-and-artifact-access)
+- [Quick Reproduction Paths](#quick-reproduction-paths)
+- [Yelp Restaurant Experiments](#yelp-restaurant-experiments)
+- [Amazon Grocery Cross-Domain Experiments](#amazon-grocery-cross-domain-experiments)
+- [Main Results](#main-results)
+- [Result Visualizations](#result-visualizations)
+- [Metric Interpretation](#metric-interpretation)
+- [Limitations](#limitations)
+- [Security and Submission Checklist](#security-and-submission-checklist)
+- [Additional Documentation](#additional-documentation)
+- [References](#references)
 
 ---
 
@@ -794,17 +794,17 @@ Application packaging and container verification are documented in [`app/README.
 
 ## Additional Documentation
 
-* [`docs/chapter_3_4_readme.md`](docs/chapter_3_4_readme.md): detailed methodology and results notes
-* [`docs/task_b_naijarec_cold_start.md`](docs/task_b_naijarec_cold_start.md): Task B adaptation notes
-* [`app/README.md`](app/README.md): containerized application guide
+- [`docs/chapter_3_4_readme.md`](docs/chapter_3_4_readme.md): detailed methodology and results notes
+- [`docs/task_b_naijarec_cold_start.md`](docs/task_b_naijarec_cold_start.md): Task B adaptation notes
+- [`app/README.md`](app/README.md): containerized application guide
 
 ---
 
 ## References
 
-* Kalm4Rec source paper provided with this project: keyword-driven retrieval-augmented LLM recommendation for cold-start users.
-* McAuley Lab Amazon Review Data: [https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/)
-* McAuley Lab Amazon k-core dataset description: [https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html)
-* Meng et al. (2020). *Exploring Data Splitting Strategies for the Evaluation of Recommendation Models*. arXiv:2007.13237. [https://arxiv.org/abs/2007.13237](https://arxiv.org/abs/2007.13237)
-* He et al. (2020). *LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation*. arXiv:2002.02126. [https://arxiv.org/abs/2002.02126](https://arxiv.org/abs/2002.02126)
-* He et al. (2017). *Neural Collaborative Filtering*. WWW 2017. [https://hexiangnan.github.io/papers/www17-ncf.pdf](https://hexiangnan.github.io/papers/www17-ncf.pdf)
+- Kalm4Rec source paper provided with this project: keyword-driven retrieval-augmented LLM recommendation for cold-start users.
+- McAuley Lab Amazon Review Data: [https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/)
+- McAuley Lab Amazon k-core dataset description: [https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html)
+- Meng et al. (2020). _Exploring Data Splitting Strategies for the Evaluation of Recommendation Models_. arXiv:2007.13237. [https://arxiv.org/abs/2007.13237](https://arxiv.org/abs/2007.13237)
+- He et al. (2020). _LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation_. arXiv:2002.02126. [https://arxiv.org/abs/2002.02126](https://arxiv.org/abs/2002.02126)
+- He et al. (2017). _Neural Collaborative Filtering_. WWW 2017. [https://hexiangnan.github.io/papers/www17-ncf.pdf](https://hexiangnan.github.io/papers/www17-ncf.pdf)
