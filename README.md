@@ -484,18 +484,6 @@ transfer of the pipeline.
 | Gemini authentication or quota failure                 | Use the stored hybrid route, which needs no API key.                                             |
 | Live Gemini scores do not exactly match the table      | Use stored rankings for reproducible evaluation; live LLM calls are not deterministic over time. |
 
-## Citation And License
-
-This repository adapts the retrieval and reranking approach from the upstream
-[KALM4Rec repository](https://github.com/hai-luu/KALM4Rec). When using this
-code or its reported results, cite the NaijaRec project report and the
-upstream work.
-
-No `LICENSE` file or formal `CITATION.cff` is currently included in this
-repository. Add the selected license and final citation metadata before public
-redistribution. Downloaded Yelp and Amazon inputs remain subject to their
-original providers' usage terms.
-
 ## Further Reading
 
 - [`app/README.md`](app/README.md): run the browser/API application.
