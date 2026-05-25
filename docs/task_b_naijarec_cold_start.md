@@ -223,31 +223,43 @@ python taskB/prepare_naija_yelp.py \
 
 Then run the same extractor/retrieval/reranker commands with `--city naija_yelp_tampa_transfer` and `--groundtruth_file data/reviews/naija_yelp_tampa_transfer_holdout.csv`.
 
-Amazon cross-domain setup:
+Amazon Grocery cross-domain setup:
 
 ```bash
-python taskB/prepare_amazon_reviews.py \
-  --reviews /path/to/amazon_reviews.json.gz \
-  --metadata /path/to/amazon_metadata.json.gz \
-  --dataset_name amazonBaby
-
-python extractor.py --city amazonBaby --edgeType IUF --kwExtractor kw_NLTK
+python extractor.py --city amazonGrocery --edgeType IUF --kwExtractor kw_NLTK --overwrite
 python retrieval.py \
-  --city amazonBaby \
+  --city amazonGrocery \
   --edgeType IUF \
   --quantity 20 \
   --validTopK 20 \
   --export2LLMs
-python reRanker/rerank.py \
-  --city amazonBaby \
-  --api_key "$GOOGLE_API_KEY" \
-  --metadata_file data/metadata/amazonBaby_restaurant_detail.csv \
-  --rerank_top_k 20
 ```
 
-Use the same pattern for `amazonVideo`.
+For the controlled dense true 3-core Grocery result:
 
-For Amazon data, `asin` or `parent_asin` becomes `rest_id`; each product is treated as an item. This lets the same Kalm4Rec keyword graph and LLM reranker run across Yelp restaurants and Amazon products. That is a cross-domain robustness/evaluation setup. It will not directly improve Yelp restaurant NDCG unless you add a supervised transfer model or use Amazon as few-shot prompt evidence, because the item space and user histories are different.
+```bash
+python extractor.py --city amazonGrocery_dense --edgeType IUF --kwExtractor kw_NLTK --overwrite
+python retrieval.py \
+  --city amazonGrocery_dense \
+  --edgeType IUF \
+  --quantity 20 \
+  --validTopK 20 \
+  --export2LLMs
+
+python taskB/hybrid_rerank.py \
+  --city amazonGrocery_dense \
+  --candidates data/out2LLMs/amazonGrocery_dense_q20_knn2rest.json \
+  --llm_rank reRanker/results_rerank/amazonGrocery_dense/zeroshot_scored_3_5_pool50_top20_hybrid_alpha_0.6_preserve_12.json \
+  --groundtruth data/reviews/amazonGrocery_dense.csv \
+  --alpha 0 \
+  --output /tmp/amazonGrocery_dense_stored_eval.json
+```
+
+For Amazon data, `asin` or `parent_asin` becomes `rest_id`; each product is
+treated as an item. The reported Grocery results use the prepared
+`amazonGrocery.csv` and `amazonGrocery_dense.csv` protocol files. This lets the
+same Kalm4Rec keyword graph and LLM reranker run across Yelp restaurants and
+Amazon products as the project’s cross-domain evaluation.
 
 ## Important Notes
 

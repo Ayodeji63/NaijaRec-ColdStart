@@ -84,27 +84,32 @@ data/reviews/*.csv
 reRanker/results_rerank/...json
 ```
 
-## Required Metadata Files
+## Metadata Files
 
-The Docker image packages these item-profile files from the repository-level `data/metadata/` directory. They are excluded from GitHub because of their size. Upload the files to Google Drive, enable **Anyone with the link: Viewer**, and replace the placeholder links before submission.
+The complete application exposes restaurant recommendations and both Amazon
+Grocery cross-domain modes, so restore all three metadata files before building
+the full demonstration. A restaurant-only deployment can run with only the
+Yelp file.
 
-| Required repository path | Approx. size | Google Drive link |
+| Full application metadata path | Approx. size | Download link |
 | --- | ---: | --- |
-| `data/metadata/naija_yelp_paper_restaurant_detail.csv` | 3.5 MB | `<ADD_GOOGLE_DRIVE_LINK_NAIJA_METADATA>` |
-| `data/metadata/amazonGrocery_restaurant_detail.csv` | 80 MB | `<ADD_GOOGLE_DRIVE_LINK_AMAZON_FULL_METADATA>` |
-| `data/metadata/amazonGrocery_dense_restaurant_detail.csv` | 7.3 MB | `<ADD_GOOGLE_DRIVE_LINK_AMAZON_DENSE_METADATA>` |
+| `data/metadata/naija_yelp_paper_restaurant_detail.csv` | 3.5 MB | [Link](https://drive.google.com/file/d/1mUl4CZ3LHO4Ir_HsGUsWkWMKFVYhi5Qu/view?usp=sharing) |
+| `data/metadata/amazonGrocery_restaurant_detail.csv` | 80 MB | [Link](https://drive.google.com/file/d/1EnYYHPr8CQkLstrtyGsPi_VZN8rr1RGU/view?usp=sharing) |
+| `data/metadata/amazonGrocery_dense_restaurant_detail.csv` | 7.3 MB | [Link](https://drive.google.com/file/d/1LYOndpLsIi12xONiG-FJY7s1vfFGcztc/view?usp=sharing) |
 
-Download them before building:
+Download the files before building the complete application:
 
 ```bash
 mkdir -p data/metadata
 python -m pip install gdown
 
-python -m gdown --fuzzy "<ADD_GOOGLE_DRIVE_LINK_NAIJA_METADATA>" \
+python -m gdown --fuzzy "https://drive.google.com/file/d/1mUl4CZ3LHO4Ir_HsGUsWkWMKFVYhi5Qu/view?usp=sharing" \
   -O data/metadata/naija_yelp_paper_restaurant_detail.csv
-python -m gdown --fuzzy "<ADD_GOOGLE_DRIVE_LINK_AMAZON_FULL_METADATA>" \
+
+python -m gdown --fuzzy "https://drive.google.com/file/d/1EnYYHPr8CQkLstrtyGsPi_VZN8rr1RGU/view?usp=sharing" \
   -O data/metadata/amazonGrocery_restaurant_detail.csv
-python -m gdown --fuzzy "<ADD_GOOGLE_DRIVE_LINK_AMAZON_DENSE_METADATA>" \
+
+python -m gdown --fuzzy "https://drive.google.com/file/d/1LYOndpLsIi12xONiG-FJY7s1vfFGcztc/view?usp=sharing" \
   -O data/metadata/amazonGrocery_dense_restaurant_detail.csv
 ```
 
@@ -226,9 +231,9 @@ curl -X POST http://localhost:8001/benchmark/recommend \
 
 Before uploading:
 
-1. Replace each Google Drive placeholder with a viewer-accessible public URL.
+1. Confirm that the three metadata download links are viewer-accessible.
 2. Ensure no `.env` file or API key is included in the repository or image.
-3. Ensure the three files in `app/model_artifacts/` exist, or recreate them with `python taskB/export_app_model_artifacts.py`.
+3. Ensure all three files in `app/model_artifacts/` exist.
 4. Build the image from a clean checkout after restoring the three metadata files.
 5. Open `http://localhost:8001/` and test both `New Persona` and `Evaluated Model` modes.
 6. Verify API behavior with `POST /recommend` and `POST /benchmark/recommend`.

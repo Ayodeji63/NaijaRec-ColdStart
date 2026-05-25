@@ -6,7 +6,10 @@ This README summarizes the methodology and experimental findings for `naijarec_c
 
 ### Research Goal
 
-The goal of `naijarec_cold-start` is cold-start and cross-domain recommendation, using a Nigerian-focused restaurant recommendation task as the main domain and Amazon reviews as an additional product-domain evaluation setting. Its MPG/LLM methodology is adapted from Kalm4Rec.
+The goal of `naijarec_cold-start` is cold-start and cross-domain
+recommendation. Yelp restaurants provide the Nigerian-focused contextual
+domain, while Amazon Grocery is the core cross-domain evaluation setting. Its
+MPG/LLM methodology is adapted from Kalm4Rec.
 
 The main restaurant dataset is a Yelp-derived subset focused on three cities:
 
@@ -38,14 +41,15 @@ The Amazon Grocery cross-domain dataset was also prepared:
 | Items | 48,297 |
 | Train/dev/test users | 11,340 / 1,417 / 1,419 |
 
-A density-controlled Amazon Grocery subset was also prepared for a fairer controlled cross-domain experiment:
+A density-controlled Amazon Grocery true 3-core subset was also prepared for a
+controlled cross-domain experiment:
 
 | Component | Count |
 | --- | ---: |
-| Users | 780 |
-| Reviews | 5,052 |
-| Items | 1,195 |
-| Train/dev/test users | 624 / 78 / 78 |
+| Users | 2,074 |
+| Reviews | 17,187 |
+| Items | 3,532 |
+| Train/dev/test users | 1,659 / 207 / 208 |
 
 The full Amazon Grocery dataset and the dense Amazon Grocery subset answer different questions. The full dataset is a large-catalog stress test with 48k products. The dense subset is a controlled cross-domain setting where each retained item has enough review/title evidence to form a meaningful keyword profile.
 
@@ -91,6 +95,10 @@ The system uses a three-stage architecture:
 ```text
 review text -> keyword extraction -> MPG graph retrieval -> LLM/hybrid reranking
 ```
+
+The cold-start recommendation flow used in the experiment is shown below:
+
+![NaijaRec cold-start recommendation flow](../cold_start.png)
 
 #### Stage 1: Keyword Extraction
 
@@ -213,16 +221,22 @@ This allows the system to retrieve restaurants from text and metadata-derived pr
 
 ### Cross-Domain Design
 
-The cross-domain extension uses Amazon reviews. The first preparation pass can read the raw enriched Amazon CSV where product metadata still appears beside each review:
+Amazon Grocery is the cross-domain evaluation setting for the project. Public
+reproduction starts from the prepared protocol files:
 
-```bash
-python taskB/prepare_amazon_reviews.py \
-  --reviews data/reviews/amazonGrocery.csv \
-  --metadata data/reviews/amazonGrocery.csv \
-  --dataset_name amazonGrocery
+```text
+data/reviews/amazonGrocery.csv
+data/reviews/amazonGrocery_splits.json
+data/reviews/amazonGrocery_dense.csv
+data/reviews/amazonGrocery_dense_splits.json
 ```
 
-After this step, `data/reviews/amazonGrocery.csv` is the normalized `naijarec_cold-start` review file and product metadata is stored separately in `data/metadata/amazonGrocery_restaurant_detail.csv`. Any later filtered Amazon dataset should therefore use the metadata file:
+The prepared full dataset already contains the metadata-enriched text used for
+the reported result. An unpublished raw/intermediate source path is therefore
+not required in the public reproduction instructions.
+
+If regenerating the dense true 3-core protocol from the prepared full dataset,
+use the full metadata file alongside it:
 
 ```bash
 python taskB/prepare_amazon_reviews.py \
@@ -230,7 +244,7 @@ python taskB/prepare_amazon_reviews.py \
   --metadata data/metadata/amazonGrocery_restaurant_detail.csv \
   --dataset_name amazonGrocery_dense \
   --min_reviews 5 \
-  --min_item_reviews 10 \
+  --min_item_reviews 3 \
   --max_items 10000
 ```
 
@@ -249,19 +263,11 @@ python retrieval.py \
 
 The Amazon setup should be interpreted as cross-domain robustness/evaluation. It does not directly improve Yelp restaurant NDCG because the item spaces are different. Yelp restaurants and Amazon grocery products do not share item IDs or interaction graphs. The benefit is that the same keyword-graph and LLM-reranking method can be evaluated across domains.
 
-For a denser Amazon controlled experiment, create a filtered dataset instead of evaluating only over the full sparse 48k-item catalog:
-
-```bash
-python taskB/prepare_amazon_reviews.py \
-  --reviews data/reviews/amazonGrocery.csv \
-  --metadata data/metadata/amazonGrocery_restaurant_detail.csv \
-  --dataset_name amazonGrocery_dense \
-  --min_reviews 5 \
-  --min_item_reviews 10 \
-  --max_items 10000
-```
-
-This is not the same task as full Amazon Grocery. It is a density-controlled experiment that tests whether metadata-enriched cross-domain retrieval improves when each product has enough textual evidence. It should be reported separately from the full Amazon stress test, not as a replacement for it.
+The dense dataset is not the same task as full Amazon Grocery. It is a
+density-controlled true 3-core experiment that tests metadata-enriched
+cross-domain retrieval where every retained user has at least 5 interactions
+and every retained product has at least 3. It is reported separately from the
+full Amazon stress test, not as a replacement for it.
 
 ### Knowledge Graph Position
 
@@ -351,7 +357,7 @@ After replacing raw review text with `full_text`, which includes product-title e
 
 | Amazon Input Text | NDCG@20 |
 | --- | ---: |
-| Product title + review text (`full_text`) | about 0.320000 |
+| Product title + review text (`full_text`) | 0.320753 |
 
 This shows that metadata-enriched text is important for cross-domain recommendation. Product titles introduce transferable product/category signals such as coffee, tea, gluten-free, organic, spicy, candy, sauce, or beverage, while raw reviews often overemphasize isolated complaints such as packaging or delivery.
 
@@ -372,7 +378,7 @@ python taskB/prepare_amazon_reviews.py \
   --metadata data/metadata/amazonGrocery_restaurant_detail.csv \
   --dataset_name amazonGrocery_dense \
   --min_reviews 5 \
-  --min_item_reviews 10 \
+  --min_item_reviews 3 \
   --max_items 10000
 ```
 
@@ -380,19 +386,40 @@ This produced:
 
 | Component | Count |
 | --- | ---: |
-| Users | 780 |
-| Reviews | 5,052 |
-| Items | 1,195 |
-| Train/dev/test users | 624 / 78 / 78 |
+| Users | 2,074 |
+| Reviews | 17,187 |
+| Items | 3,532 |
+| Train/dev/test users | 1,659 / 207 / 208 |
 
-This subset is not used to hide the full Amazon difficulty. It controls for item sparsity by keeping products with at least 10 reviews and users with at least 5 reviews. The full Amazon result is the stress test; the dense Amazon result is the controlled cross-domain experiment.
+This subset is not used to hide the full Amazon difficulty. It controls for
+item sparsity through iterative filtering with at least 3 reviews per retained
+product and at least 5 reviews per retained user. The full Amazon result is the
+stress test; the dense Amazon result is the controlled cross-domain experiment.
+
+| Dense Amazon method | Precision@20 | Recall@20 | F1@20 | NDCG@20 |
+| --- | ---: | ---: | ---: | ---: |
+| MPG retrieval | 0.066827 | 0.174981 | 0.089956 | 0.445954 |
+| Stored Gemini hybrid, `alpha=0.6` | 0.066827 | 0.174981 | 0.089956 | **0.488582** |
+
+The stored dense hybrid result can be evaluated without making new Gemini API
+calls after regenerating dense MPG candidates:
+
+```bash
+python taskB/hybrid_rerank.py \
+  --city amazonGrocery_dense \
+  --candidates data/out2LLMs/amazonGrocery_dense_q20_knn2rest.json \
+  --llm_rank reRanker/results_rerank/amazonGrocery_dense/zeroshot_scored_3_5_pool50_top20_hybrid_alpha_0.6_preserve_12.json \
+  --groundtruth data/reviews/amazonGrocery_dense.csv \
+  --alpha 0 \
+  --output /tmp/amazonGrocery_dense_stored_eval.json
+```
 
 ### Protocol Justification and Sources
 
 The full-vs-dense Amazon design follows established recommender-system evaluation practice rather than being an arbitrary reduction of the dataset.
 
 1. **k-core filtering is standard for Amazon recommendation datasets.**
-   The public McAuley Amazon datasets explicitly provide dense `5-core` subsets, where remaining users and items have at least 5 reviews. The older Amazon data page describes k-cores as dense subsets where each remaining user and item has `k` reviews, and the current Amazon review data page also provides a `5-core` subset. Our `amazonGrocery_dense` setting follows this same logic, but uses a stricter item threshold of 10 reviews to ensure stronger product keyword profiles.
+   The public McAuley Amazon datasets provide dense k-core subsets, where remaining users and items meet minimum review-count conditions. Our `amazonGrocery_dense` setting follows this filtering logic with a minimum of 5 user reviews and 3 item reviews, the strongest surviving controlled setting used in the reported runs.
 
 2. **Data split and filtering choices affect recommender rankings.**
    Meng et al. (2020) show that recommender-system results are strongly affected by splitting strategy and that evaluation protocols can change the apparent ranking of models. This supports reporting the full sparse Amazon stress test separately from the dense controlled Amazon test, rather than mixing the two as if they were the same task.
